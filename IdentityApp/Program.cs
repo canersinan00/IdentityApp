@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<IdentityContext>(options => options.UseSqlite(builder.Configuration["ConnectionStrings:SQLite_Connection"]));
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<IdentityContext>();
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -20,7 +20,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireDigit = false;
 
     options.User.RequireUniqueEmail = true;
-    options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz";
+    // options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz";
     
 });
 
