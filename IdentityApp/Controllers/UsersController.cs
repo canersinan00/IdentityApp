@@ -31,7 +31,7 @@ namespace IdentityApp.Controllers
             {
                 var user = new AppUser
                 {
-                    UserName = model.Email,
+                    UserName = model.UserName,
                     Email = model.Email,
                     FullName = model.FullName
                 };
@@ -97,6 +97,11 @@ namespace IdentityApp.Controllers
 
                     if (result.Succeeded)
                     {
+                        await _userManager.RemoveFromRolesAsync(user, await _userManager.GetRolesAsync(user));
+                        if (model.SelectedRoles != null)
+                        {
+                        await _userManager.AddToRolesAsync(user, model.SelectedRoles);
+                        }
                         return RedirectToAction("Index");
                     }
                     foreach (IdentityError error in result.Errors)
