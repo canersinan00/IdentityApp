@@ -134,6 +134,34 @@ namespace IdentityApp.Controllers
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login");
         }
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string Email)
+        {
+            if (string.IsNullOrEmpty(Email))
+            {
+                TempData["message"] = "Please enter your email address";
+                return View();
+            }
+
+            var user = await _userManager.FindByEmailAsync(Email);
+            if (user == null)
+            {
+                TempData["message"] = "Not fount this account";
+
+                return View();
+            }
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var url = Url.Action("ResetPassword", "Account", new { user.Id, token });
+
+            await _emailSender.SendEmailAsync(Email, "Reset Password", $"Please http://localhost:5207{url}'>click</a> on the link for reset password.");
+            TempData["message"] = "You can reset your password with the link sent to your e-mail address.";
+
+            return View();
+        }
     
     }
 }
