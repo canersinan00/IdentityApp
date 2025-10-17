@@ -162,6 +162,42 @@ namespace IdentityApp.Controllers
 
             return View();
         }
-    
+
+        public IActionResult ResetPassword(string ID, string token)
+        {
+            if (ID == null || token == null)
+            {
+                return RedirectToAction("Login");
+            }
+            var model = new ResetPasswordViewModel { Token = token, Email = ID };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null)
+                {
+                    TempData["message"] = "Not fount this account";
+                    return RedirectToAction("Login");
+                }
+                var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+
+                if (result.Succeeded)
+                {
+                    TempData["message"] = "Your password changed success.";
+                    return RedirectToAction("Login");
+                }
+
+                foreach (IdentityError error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+            return View();
+        }
     }
 }
