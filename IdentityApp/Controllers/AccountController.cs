@@ -122,13 +122,18 @@ namespace IdentityApp.Controllers
                 if (result.Succeeded)
                 {
                     TempData["message"] = "Your account approoved.";
-                    return RedirectToAction("Login","Account");
+                    return RedirectToAction("Login", "Account");
                 }
             }
             TempData["message"] = "Not found this user account.";
             return View();
         }
 
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Login");
+        }
     
     }
 }
